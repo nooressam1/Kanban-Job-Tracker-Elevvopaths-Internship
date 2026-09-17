@@ -53,16 +53,14 @@ export default function BoardSection({
             collisionDetection={closestCorners}
             onDragEnd={handleDragEnd}
         >
-            <main className="flex-1  h-screen flex flex-col gap-6 overflow-x-auto  bg-[#F1F5F9]">
+            <main className="flex-1  h-screen flex flex-col gap-3 overflow-x-auto  bg-[#F1F5F9]">
                 {/* Header: Board Title & Add Job Action */}
                 <div className="flex p-6 items-center justify-between">
                     <div>
                         <h1 className="text-neutral-900 text-2xl font-bold tracking-tight">
                             {title}
                         </h1>
-                        <p className="text-xs text-neutral-500 mt-0.5">
-                            Track and manage your job applications across stages
-                        </p>
+
                     </div>
                     <button
                         type="button"
