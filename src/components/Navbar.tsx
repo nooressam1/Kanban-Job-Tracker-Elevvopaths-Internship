@@ -2,18 +2,14 @@ import { useState } from 'react';
 import SidebarToggleButton from './SidebarToggleButton';
 import NavButton from './NavButtons';
 import CreateBoardButton from './CreateBoardButton';
-import type { Board } from '../types/kanban';
 import { useKanban } from '../context/KanbanContext';
 import CreateBoardModal from './CreateBoardModal';
 
-
-
 export default function Navbar() {
-    const { boards, selectedBoardId, setSelectedBoardId, createBoard } = useKanban();
+    const { boards, selectedBoardId, setSelectedBoardId, isLoading } = useKanban();
     const [isCollapsed, setIsCollapsed] = useState(false);
     const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
     const [isMobileOpen, setIsMobileOpen] = useState(false);
-
 
     return (
         <>
@@ -56,16 +52,23 @@ export default function Navbar() {
                 <div className="p-5 flex-1 flex flex-col gap-3 overflow-y-auto">
                     <h1 className="text-[#858282] text-sm font-normal ">Boards</h1>
                     <nav className='flex flex-col gap-3 '>
-                        {boards.map((board) => (
-                            <NavButton
-                                key={board.id}
-                                label={board.name}
-                                title={board.name}
-                                isActive={selectedBoardId === board.id}
-                                onClick={() => setSelectedBoardId(board.id)}
-                                isCollapsed={isCollapsed}
-                            />
-                        ))}
+                        {isLoading ? (
+                            <div className="flex flex-col gap-2">
+                                <div className="h-9 w-full bg-neutral-200/70 rounded-lg animate-pulse" />
+                                <div className="h-9 w-full bg-neutral-200/50 rounded-lg animate-pulse" />
+                            </div>
+                        ) : (
+                            boards.map((board) => (
+                                <NavButton
+                                    key={board.id}
+                                    label={board.name}
+                                    title={board.name}
+                                    isActive={selectedBoardId === board.id}
+                                    onClick={() => setSelectedBoardId(board.id)}
+                                    isCollapsed={isCollapsed}
+                                />
+                            ))
+                        )}
                     </nav>
 
                 </div>

@@ -20,7 +20,6 @@ export default function JobCard({ job }: JobCardProps) {
         setNodeRef,
         transform,
         transition,
-        isDragging,
     } = useSortable({ id: job.id, data: { job } })
     const style = {
         transform: CSS.Transform.toString(transform),

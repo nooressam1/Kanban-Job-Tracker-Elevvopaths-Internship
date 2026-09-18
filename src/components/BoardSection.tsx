@@ -5,7 +5,6 @@ import Column from './columns';
 import { useKanban } from '../context/KanbanContext';
 import { closestCorners, DndContext, PointerSensor, useSensor, useSensors, type DragEndEvent } from '@dnd-kit/core';
 import CreateJobModal from './CreateJobModal';
-import { useState } from 'react';
 
 interface BoardSectionProps {
     boardTitle: string;
