@@ -1,75 +1,72 @@
-# React + TypeScript + Vite
+# 📋 Kanban Job Tracker Frontend 
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A modern, responsive, full-featured **Kanban Board** built with **React**, **TypeScript**, and **Tailwind CSS** to track and organize job applications across different recruitment stages.
 
-Currently, two official plugins are available:
+Developed as part of the **Elevvo Internship Program**.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+---
 
-## React Compiler
+## ✨ Features
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+- **Drag & Drop Kanban Workflow**: Move application cards seamlessly across 4 recruitment stages (**Applied**, **Interviewing**, **Offer**, **Rejected**) using `@dnd-kit`.
+- **Multi-Board Management**: Create and switch between multiple job boards 
+- **URL Query Syncing**: The active board ID is synced with the browser URL (`?board=...`), preserving your active view on refresh and shareable links.
+- ** LocalStorage Persistence with Custom Hook**: Application data is automatically persisted in browser storage via a reusable `useLocalStorage` hook.
+- ** Simulated Network Delay & Skeleton Loader**: Features an artificial 1-second latency simulation on initial load, rendering a shimmering, animated Skeleton Loader (`animate-pulse`) before rendering real data.
+- ** Job Management (CRUD)**:
+  - Add new job applications with title, company, salary, location, date, and priority level.
+  - Edit existing job details via an interactive modal form.
+  - Delete jobs or entire boards.
+- **📱 Responsive Layout & Collapsible Sidebar**: Includes a desktop sidebar with collapse mode and a mobile slide-out overlay drawer.
 
-## Expanding the ESLint configuration
+---
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+##  Tech Stack
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+- **Framework**: [React 19](https://react.dev/) + [Vite](https://vitejs.dev/)
+- **Language**: [TypeScript](https://www.typescriptlang.org/)
+- **Styling**: [Tailwind CSS v4](https://tailwindcss.com/)
+- **Drag & Drop**: [@dnd-kit/core](https://dndkit.com/) & [@dnd-kit/sortable](https://dndkit.com/)
+- **Icons**: [Lucide React](https://lucide.dev/)
+- **Form Management**: [React Hook Form](https://react-hook-form.com/)
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
+---
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
 
-```
+##  Getting Started
 
-You can also install [eslint-plugin-react-x](https://npmx.dev/package/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://npmx.dev/package/eslint-plugin-react-dom) for React-specific lint rules:
+### Prerequisites
+Make sure you have [Node.js](https://nodejs.org/) installed.
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+### Installation
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+1. **Clone the repository**:
+   ```bash
+   git clone https://github.com/your-username/Kanban-Job-Tracker-Elevvopaths-Internship.git
+   cd Kanban-Job-Tracker-Elevvopaths-Internship
+   ```
 
-```
+2. **Install dependencies**:
+   ```bash
+   npm install
+   ```
+
+3. **Start the development server**:
+   ```bash
+   npm run dev
+   ```
+   Open your browser and navigate to `http://localhost:5173`.
+
+4. **Build for production**:
+   ```bash
+   npm run build
+   ```
+
+5. **Preview production build locally**:
+   ```bash
+   npm run preview
+   ```
+
+
+## 📄 License
+This project is developed for educational purposes as part of the **Elevvo Internship Program**.
