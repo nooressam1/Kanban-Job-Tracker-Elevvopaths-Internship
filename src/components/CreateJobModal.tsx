@@ -1,4 +1,5 @@
-import React, { useEffect, useReducer } from 'react';
+import { useEffect } from 'react';
+import { useForm, type SubmitHandler } from 'react-hook-form';
 import Modal from './Modal';
 import type { Job, Status } from '../types/kanban';
 import { useKanban } from '../context/KanbanContext';
@@ -8,12 +9,17 @@ interface JobModalProps {
     onClose: () => void;
     jobToEdit?: Job | null; // If provided -> EDIT mode. If null/undefined -> CREATE mode.
 }
-// 1. Form state shape
-type JobFormState = Omit<Job, 'id' | 'boardId' | 'appliedDate'>;
 
+interface JobFormInputs {
+    title: string;
+    company: string;
+    status: Status;
+    priority: 'High' | 'Medium' | 'Low';
+    location?: string;
+    salary?: string;
+}
 
-// 2. Initial blank form values
-const initialFormState: JobFormState = {
+const defaultValues: JobFormInputs = {
     title: '',
     company: '',
     status: 'Applied',
@@ -22,82 +28,55 @@ const initialFormState: JobFormState = {
     salary: '',
 };
 
-type FormAction =
-    | { type: 'UPDATE_FIELD'; field: keyof JobFormState; value: string }
-    | { type: 'SET_FORM'; payload: JobFormState }
-    | { type: 'RESET' };
-function jobFormReducer(state: JobFormState, action: FormAction): JobFormState {
-    switch (action.type) {
-        case 'UPDATE_FIELD':
-            return { ...state, [action.field]: action.value };
-        case 'SET_FORM':
-            return action.payload;
-        case 'RESET':
-            return initialFormState;
-        default:
-            return state;
-    }
-}
-
-
-
 export default function CreateJobModal({
     isOpen,
-    onClose, jobToEdit
+    onClose,
+    jobToEdit,
 }: JobModalProps) {
-    const [formData, dispatch] = useReducer(jobFormReducer, initialFormState);
     const { selectedBoardId, updateJob, addJob } = useKanban();
 
+    const {
+        register,
+        handleSubmit,
+        reset,
+        formState: { errors, isSubmitting },
+    } = useForm<JobFormInputs>({
+        defaultValues,
+    });
+
+    // Reset or pre-fill form when modal opens or jobToEdit changes
     useEffect(() => {
         if (jobToEdit) {
-            // Pre-fill form with existing job details
-            dispatch({
-                type: 'SET_FORM',
-                payload: {
-                    title: jobToEdit.title,
-                    company: jobToEdit.company,
-                    status: jobToEdit.status,
-                    priority: jobToEdit.priority,
-                    location: jobToEdit.location || '',
-                    salary: jobToEdit.salary || '',
-                },
+            reset({
+                title: jobToEdit.title,
+                company: jobToEdit.company,
+                status: jobToEdit.status,
+                priority: jobToEdit.priority,
+                location: jobToEdit.location || '',
+                salary: jobToEdit.salary || '',
             });
         } else {
-            dispatch({ type: 'RESET' });
+            reset(defaultValues);
         }
-    }, [jobToEdit, isOpen]);
-
-
-
-    // Helper to update any field cleanly
-    const handleChange = (
-        field: keyof JobFormState,
-        value: string
-    ) => {
-        dispatch({ type: 'UPDATE_FIELD', field, value });
-    };
+    }, [jobToEdit, isOpen, reset]);
 
     const handleClose = () => {
-        dispatch({ type: 'RESET' }); // Clear fields when closing
+        reset(defaultValues);
         onClose();
     };
 
-    const handleSubmit = (e: React.FormEvent) => {
-        e.preventDefault();
-        if (!formData.title.trim() || !formData.company.trim()) return;
-
+    const onSubmit: SubmitHandler<JobFormInputs> = (data) => {
         if (jobToEdit) {
-            // EDIT
+
             updateJob({
                 ...jobToEdit,
-                ...formData,
+                ...data,
             });
         } else {
-            // CREATE: generate new id and date
             addJob({
                 id: `job-${Date.now()}`,
                 boardId: selectedBoardId,
-                ...formData,
+                ...data,
                 appliedDate: new Date().toISOString().split('T')[0],
             });
         }
@@ -107,7 +86,7 @@ export default function CreateJobModal({
 
     return (
         <Modal isOpen={isOpen} onClose={handleClose} title={jobToEdit ? 'Edit Job' : 'Add New Job'}>
-            <form onSubmit={handleSubmit} className="flex flex-col gap-4">
+            <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-4">
                 {/* Job Title */}
                 <div>
                     <label className="block text-xs font-semibold text-neutral-600 mb-1">
@@ -115,13 +94,17 @@ export default function CreateJobModal({
                     </label>
                     <input
                         autoFocus
-                        required
                         type="text"
-                        value={formData.title}
-                        onChange={(e) => handleChange('title', e.target.value)}
+                        {...register('title', {
+                            required: 'Job title is required',
+                            validate: (val) => val.trim().length > 0 || 'Job title cannot be empty',
+                        })}
                         placeholder="e.g. Frontend Engineer (React)"
                         className="w-full px-3.5 py-2.5 text-sm text-neutral-800 border border-neutral-200 rounded-xl outline-none focus:border-[#637ecb] focus:ring-2 focus:ring-[#637ecb]/15"
                     />
+                    {errors.title && (
+                        <p className="text-xs text-red-500 mt-1">{errors.title.message}</p>
+                    )}
                 </div>
 
                 {/* Company Name */}
@@ -130,13 +113,17 @@ export default function CreateJobModal({
                         Company *
                     </label>
                     <input
-                        required
                         type="text"
-                        value={formData.company}
-                        onChange={(e) => handleChange('company', e.target.value)}
+                        {...register('company', {
+                            required: 'Company name is required',
+                            validate: (val) => val.trim().length > 0 || 'Company name cannot be empty',
+                        })}
                         placeholder="e.g. Google, Stripe"
                         className="w-full px-3.5 py-2.5 text-sm text-neutral-800 border border-neutral-200 rounded-xl outline-none focus:border-[#637ecb] focus:ring-2 focus:ring-[#637ecb]/15"
                     />
+                    {errors.company && (
+                        <p className="text-xs text-red-500 mt-1">{errors.company.message}</p>
+                    )}
                 </div>
 
                 {/* Status & Priority row */}
@@ -146,8 +133,7 @@ export default function CreateJobModal({
                             Status
                         </label>
                         <select
-                            value={formData.status}
-                            onChange={(e) => handleChange('status', e.target.value as Status)}
+                            {...register('status')}
                             className="w-full px-3 py-2.5 text-sm bg-white text-neutral-800 border border-neutral-200 rounded-xl outline-none focus:border-[#637ecb]"
                         >
                             <option value="Applied">Applied</option>
@@ -162,8 +148,7 @@ export default function CreateJobModal({
                             Priority
                         </label>
                         <select
-                            value={formData.priority}
-                            onChange={(e) => handleChange('priority', e.target.value as 'High' | 'Medium' | 'Low')}
+                            {...register('priority')}
                             className="w-full px-3 py-2.5 text-sm bg-white text-neutral-800 border border-neutral-200 rounded-xl outline-none focus:border-[#637ecb]"
                         >
                             <option value="High">High</option>
@@ -181,8 +166,7 @@ export default function CreateJobModal({
                         </label>
                         <input
                             type="text"
-                            value={formData.location}
-                            onChange={(e) => handleChange('location', e.target.value)}
+                            {...register('location')}
                             placeholder="e.g. Remote, NY"
                             className="w-full px-3.5 py-2.5 text-sm text-neutral-800 border border-neutral-200 rounded-xl outline-none focus:border-[#637ecb]"
                         />
@@ -194,8 +178,7 @@ export default function CreateJobModal({
                         </label>
                         <input
                             type="text"
-                            value={formData.salary}
-                            onChange={(e) => handleChange('salary', e.target.value)}
+                            {...register('salary')}
                             placeholder="e.g. $120k - $140k"
                             className="w-full px-3.5 py-2.5 text-sm text-neutral-800 border border-neutral-200 rounded-xl outline-none focus:border-[#637ecb]"
                         />
@@ -213,7 +196,7 @@ export default function CreateJobModal({
                     </button>
                     <button
                         type="submit"
-                        disabled={!formData.title.trim() || !formData.company.trim()}
+                        disabled={isSubmitting}
                         className="py-2.5 px-4 bg-[#637ecb] hover:bg-[#526cba] disabled:bg-[#637ecb]/50 disabled:cursor-not-allowed text-white font-medium text-sm rounded-xl transition-all cursor-pointer shadow-xs"
                     >
                         {jobToEdit ? 'Save Changes' : 'Create Job'}

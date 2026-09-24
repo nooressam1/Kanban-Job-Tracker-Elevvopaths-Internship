@@ -20,7 +20,7 @@ export default function BoardSection({
 }: BoardSectionProps) {
     const title = boardTitle || companieLabel || 'Job Board';
 
-    const { moveJob, isJobModalOpen, openCreateJobModal, closeJobModal, editingJob } = useKanban();
+    const { moveJob, reorderJobs, isJobModalOpen, openCreateJobModal, closeJobModal, editingJob } = useKanban();
     const sensors = useSensors(
         useSensor(PointerSensor, {
             activationConstraint: {
@@ -31,20 +31,20 @@ export default function BoardSection({
     // 2. Handle dropping the card
     const handleDragEnd = (event: DragEndEvent) => {
         const { active, over } = event;
-        if (!over) return;
+        if (!over || active.id === over.id) return;
+
         const activeJobId = String(active.id);
         const overId = String(over.id);
-        // Case A: Dropped directly over a Column (overId is the column name)
+
+        // Case A: Dropped directly over a Column
         const isColumn = COLUMNS.some((col) => col.id === overId);
         if (isColumn) {
             moveJob(activeJobId, overId as Status);
             return;
         }
-        // Case B: Dropped over another JobCard (find that job's column)
-        const targetJob = jobs.find((j) => j.id === overId);
-        if (targetJob) {
-            moveJob(activeJobId, targetJob.status);
-        }
+
+        // Case B: Dropped over another JobCard (reorder position & update status)
+        reorderJobs(activeJobId, overId);
     };
     return (
         <DndContext

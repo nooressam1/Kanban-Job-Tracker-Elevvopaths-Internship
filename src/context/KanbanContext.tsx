@@ -1,6 +1,7 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import type { Board, Job, Status } from '../types/kanban';
 import { useLocalStorage } from '../hooks/useLocalStorage';
+import { arrayMove } from '@dnd-kit/sortable';
 
 interface KanbanContextType {
     boards: Board[];
@@ -10,6 +11,7 @@ interface KanbanContextType {
     createBoard: (name: string) => void;
     deleteBoard: (id: string) => void;
     moveJob: (id: string, newStatus: Status) => void;
+    reorderJobs: (activeId: string, overId: string) => void;
     addJob: (job: Job) => void;
     deleteJob: (id: string) => void;
     updateJob: (job: Job) => void;
@@ -109,6 +111,20 @@ export const KanbanProvider: React.FC<{ children: React.ReactNode }> = ({ childr
         });
     };
 
+    const reorderJobs = (activeId: string, overId: string) => {
+        setJobs((prev) => {
+            const oldIndex = prev.findIndex((j) => j.id === activeId);
+            const newIndex = prev.findIndex((j) => j.id === overId);
+            if (oldIndex === -1 || newIndex === -1) return prev;
+
+            const updated = [...prev];
+            const targetStatus = prev[newIndex].status;
+            updated[oldIndex] = { ...updated[oldIndex], status: targetStatus };
+
+            return arrayMove(updated, oldIndex, newIndex);
+        });
+    };
+
     const addJob = (newJob: Job) => {
         setJobs((prev) => [newJob, ...prev]);
     };
@@ -158,6 +174,7 @@ export const KanbanProvider: React.FC<{ children: React.ReactNode }> = ({ childr
                 deleteBoard,
                 updateJob,
                 moveJob,
+                reorderJobs,
                 addJob,
                 jobs,
                 currentBoardJobs,

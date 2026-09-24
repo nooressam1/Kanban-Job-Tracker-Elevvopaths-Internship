@@ -1,32 +1,41 @@
 // src/components/CreateBoardModal.tsx
-import { useState } from 'react';
 import Modal from './Modal';
 import { useKanban } from '../context/KanbanContext';
+import { useForm, type SubmitHandler } from 'react-hook-form';
+
+interface FormInputs {
+    name: string;
+}
 
 export default function CreateBoardModal({ isOpen, onClose }: { isOpen: boolean; onClose: () => void }) {
-    const [name, setName] = useState('');
     const { createBoard } = useKanban();
+    const {
+        register,
+        handleSubmit,
+        reset,
+        formState: { errors, isSubmitting },
+    } = useForm<FormInputs>();
 
-    const handleSubmit = (e: React.FormEvent) => {
-        e.preventDefault();
-        if (!name.trim()) return;
-        createBoard(name.trim());
-        setName('');
+    const onSubmit: SubmitHandler<FormInputs> = (data) => {
+        if (!data.name.trim()) return;
+        createBoard(data.name.trim());
+        reset();
         onClose();
     };
 
     return (
         <Modal isOpen={isOpen} onClose={onClose} title="New Board">
-            <form onSubmit={handleSubmit} className="flex flex-col gap-6">
+            <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-6">
                 <input
                     autoFocus
                     type="text"
-                    value={name}
-                    onChange={(e) => setName(e.target.value)}
-                    placeholder="New Board Name"
+                    {...register('name', { required: 'Board Name is required' })} placeholder="New Board Name"
                     className="w-full px-4 py-3 text-neutral-800 border border-neutral-200 rounded-xl outline-none focus:border-[#637ecb] focus:ring-3 focus:ring-[#637ecb]/15"
                 />
 
+                {errors.name && (
+                    <p className="text-xs text-red-500 mt-1">{errors.name.message}</p>
+                )}
                 <div className="grid grid-cols-2 gap-3 pt-1">
                     <button
                         type="button"
@@ -37,7 +46,7 @@ export default function CreateBoardModal({ isOpen, onClose }: { isOpen: boolean;
                     </button>
                     <button
                         type="submit"
-                        disabled={!name.trim()}
+                        disabled={isSubmitting}
                         className="py-3 px-4 bg-[#637ecb] hover:bg-[#526cba] disabled:bg-[#637ecb]/50 text-white font-medium text-sm rounded-xl cursor-pointer"
                     >
                         Create New Board

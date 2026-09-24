@@ -15,13 +15,14 @@ export default function Column({ columnTitle, columnColor, jobData, }: ColumnPro
         id: columnTitle,
     });
     return (
-        <section ref={setNodeRef} style={{ borderTopColor: columnColor }}
-            className={`max-h-full shrink-0 py-4 px-4 border-t-7 rounded-md w-[320px] bg-[#FDFDFD] h-full flex flex-col gap-3 transition-colors ${isOver ? 'bg-blue-50/50' : ''}`}>
-            <h1 className="text-black flex  text-md font-semibold">{columnTitle}</h1>
-            <SortableContext
-                items={filteredJobs.map((job) => job.id)}
-                strategy={verticalListSortingStrategy}
-            >
+        <SortableContext
+            items={filteredJobs.map((job) => job.id)}
+            strategy={verticalListSortingStrategy}
+        >
+            <section ref={setNodeRef} style={{ borderTopColor: columnColor }}
+                className={`max-h-full shrink-0 py-4 px-4 border-t-7 rounded-md w-[320px] bg-[#FDFDFD] h-full flex flex-col gap-3 transition-colors ${isOver ? 'bg-blue-50/50' : ''}`}>
+                <h1 className="text-black flex  text-md font-semibold">{columnTitle}</h1>
+
                 <div className="flex flex-col gap-3 overflow-y-auto flex-1 min-h-[100px]">
                     {filteredJobs.map((job) => (
                         <JobCard key={job.id} job={job} />
@@ -32,7 +33,8 @@ export default function Column({ columnTitle, columnColor, jobData, }: ColumnPro
                         </div>
                     )}
                 </div>
-            </SortableContext>
-        </section >
+
+            </section >
+        </SortableContext>
     );
 }

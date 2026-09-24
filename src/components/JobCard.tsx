@@ -20,21 +20,25 @@ export default function JobCard({ job }: JobCardProps) {
         setNodeRef,
         transform,
         transition,
+        isDragging
     } = useSortable({ id: job.id, data: { job } })
     const style = {
         transform: CSS.Transform.toString(transform),
-        transition
+        transition,
+        opacity: isDragging ? 0.4 : 1,
     }
     return (
         <div ref={setNodeRef}
             style={style}
             {...attributes}
-            {...listeners} className="bg-white p-4 rounded-xl border border-neutral-200/80 shadow-xs hover:shadow-md hover:border-neutral-300 transition-all duration-200 flex flex-col justify-between gap-3">
+            {...listeners} className={`bg-white p-4 rounded-xl border border-neutral-200/80 shadow-xs hover:shadow-md cursor-grab active:cursor-grabbing flex flex-col justify-between gap-3 ${isDragging ? 'shadow-lg ring-2 ring-[#637ecb]/40 z-50' : ''
+                }`}>
             {/* Top row: Priority badge + Edit button */}
             <div className="flex items-center justify-between">
                 <Badge variant={badgeVariant} label={job.priority || 'High'} />
-                <EditButton size="sm" onClick={() => openEditJobModal(job)} />
-            </div>
+                <div onPointerDown={(e) => e.stopPropagation()}>
+                    <EditButton size="sm" onClick={() => openEditJobModal(job)} />
+                </div>            </div>
 
             {/* Position & Company */}
             <div className="flex flex-col gap-1">
@@ -70,6 +74,6 @@ export default function JobCard({ job }: JobCardProps) {
                     <span>Applied {job.appliedDate}</span>
                 </div>
             </div>
-        </div>
+        </div >
     );
 }
