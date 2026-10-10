@@ -33,14 +33,12 @@ export default function JobCard({ job }: JobCardProps) {
             {...attributes}
             {...listeners} className={`bg-white p-4 rounded-xl border border-neutral-200/80 shadow-xs hover:shadow-md cursor-grab active:cursor-grabbing flex flex-col justify-between gap-3 ${isDragging ? 'shadow-lg ring-2 ring-[#637ecb]/40 z-50' : ''
                 }`}>
-            {/* Top row: Priority badge + Edit button */}
             <div className="flex items-center justify-between">
                 <Badge variant={badgeVariant} label={job.priority || 'High'} />
                 <div onPointerDown={(e) => e.stopPropagation()}>
                     <EditButton size="sm" onClick={() => openEditJobModal(job)} />
                 </div>            </div>
 
-            {/* Position & Company */}
             <div className="flex flex-col gap-1">
                 <h2 className="text-neutral-900 font-semibold text-base leading-snug">
                     {job.title}
@@ -51,7 +49,6 @@ export default function JobCard({ job }: JobCardProps) {
                 </div>
             </div>
 
-            {/* Location & Salary badges */}
             <div className="flex flex-wrap items-center gap-2 text-xs text-neutral-500">
                 {job.location && (
                     <span className="inline-flex items-center gap-1 bg-neutral-50 px-2 py-0.5 rounded-md border border-neutral-100">
@@ -67,7 +64,6 @@ export default function JobCard({ job }: JobCardProps) {
                 )}
             </div>
 
-            {/* Footer: Applied Date */}
             <div className="pt-2 border-t border-neutral-100 flex items-center justify-between text-xs text-neutral-400">
                 <div className="flex items-center gap-1">
                     <Calendar className="w-3 h-3 text-neutral-400 shrink-0" />

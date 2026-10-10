@@ -16,7 +16,6 @@ export const SidebarToggleIcon: React.FC<{ isCollapsed?: boolean; className?: st
       className={`${className} transition-transform duration-200 ${isCollapsed ? "rotate-180" : ""
         }`}
     >
-      {/* Outer rounded rectangle */}
       <rect
         x="3"
         y="4.5"
@@ -28,7 +27,6 @@ export const SidebarToggleIcon: React.FC<{ isCollapsed?: boolean; className?: st
         strokeLinecap="round"
         strokeLinejoin="round"
       />
-      {/* Vertical sidebar divider */}
       <line
         x1="9.5"
         y1="4.5"
@@ -38,7 +36,6 @@ export const SidebarToggleIcon: React.FC<{ isCollapsed?: boolean; className?: st
         strokeWidth="2.2"
         strokeLinecap="round"
       />
-      {/* Left chevron arrow */}
       <path
         d="M7.75 9.75L5.5 12L7.75 14.25"
         stroke="currentColor"

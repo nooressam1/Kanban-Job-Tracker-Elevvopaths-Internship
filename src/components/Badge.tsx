@@ -9,16 +9,9 @@ interface BadgeProps extends React.HTMLAttributes<HTMLSpanElement> {
 }
 
 const variantStyles: Record<BadgeVariant, string> = {
-    // Red (Matches your image: soft pink background, light red border, crimson text)
     high: 'bg-red-50 text-red-600 border-red-200',
-
-    // Amber / Orange (Medium priority)
     medium: 'bg-amber-50 text-amber-600 border-amber-200',
-
-    // Green (Low priority / Done)
     low: 'bg-emerald-50 text-emerald-600 border-emerald-200',
-
-    // Blue (Info / In Progress)
     blue: 'bg-blue-50 text-blue-600 border-blue-200',
 };
 
