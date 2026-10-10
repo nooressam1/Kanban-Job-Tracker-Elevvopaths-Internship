@@ -9,7 +9,6 @@ import CreateJobModal from './CreateJobModal';
 interface BoardSectionProps {
     boardTitle: string;
     jobs: Job[];
-    // Backward compatibility prop
     companieLabel?: string;
 }
 
@@ -28,7 +27,6 @@ export default function BoardSection({
             },
         })
     );
-    // 2. Handle dropping the card
     const handleDragEnd = (event: DragEndEvent) => {
         const { active, over } = event;
         if (!over || active.id === over.id) return;
@@ -36,14 +34,12 @@ export default function BoardSection({
         const activeJobId = String(active.id);
         const overId = String(over.id);
 
-        // Case A: Dropped directly over a Column
         const isColumn = COLUMNS.some((col) => col.id === overId);
         if (isColumn) {
             moveJob(activeJobId, overId as Status);
             return;
         }
 
-        // Case B: Dropped over another JobCard (reorder position & update status)
         reorderJobs(activeJobId, overId);
     };
     return (
@@ -53,7 +49,6 @@ export default function BoardSection({
             onDragEnd={handleDragEnd}
         >
             <main className="flex-1  h-screen flex flex-col gap-3 overflow-x-auto  bg-[#F1F5F9]">
-                {/* Header: Board Title & Add Job Action */}
                 <div className="flex p-6 items-center justify-between">
                     <div>
                         <h1 className="text-neutral-900 text-2xl font-bold tracking-tight">
@@ -71,7 +66,6 @@ export default function BoardSection({
                     </button>
                 </div>
 
-                {/* Kanban Columns (4 Stages) */}
                 <div className="flex-1 flex flex-row w-full px-5 overflow-y-auto  gap-3 h-full min-h-0">
                     {COLUMNS.map((column) => (
                         <Column
